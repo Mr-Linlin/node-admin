@@ -1,0 +1,29 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "name": "后端开发",
+            "classify_name":["Java","PHP","GO","Python","Android"]
+        },
+        {
+            "id": 2,
+            "name": "前端开发",
+            "classify_name":["JavaScript","Vue","Node","React","JQuery"]
+        },
+        {
+            "id": 3,
+            "name": "数据库",
+            "classify_name":["MongoDB","MySQL","Oracle","SQL Server"]
+        },
+        {
+            "id": 4,
+            "name": "UI设计",
+            "classify_name":["APPUI设计","动画动效","PS"]
+        },
+        {
+            "id": 5,
+            "name": "移动开发",
+            "classify_name":["Html5","IOS","Android","Bootstrap"]
+        }
+    ]
+}
