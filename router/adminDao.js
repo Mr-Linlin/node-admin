@@ -37,6 +37,10 @@ router.get('/getCourseList', course.courseList)
 router.get('/getCourseInfo', course.courseInfo)
 // 调用此接口可获取对应课程的类型
 router.get('/getCouresClassify',course.getCourseClassify)
+//保存当前课程的观看记录
+router.post('/setCoursePlan',course.setCoursePlan)
+// 根据id获取用户购买的所有课程
+router.get('/getMyCourse',course.getMyCourse)
 
 // 试卷功能接口
 // 添加试卷

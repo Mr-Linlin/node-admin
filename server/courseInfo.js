@@ -187,9 +187,9 @@ const addCourseSection = (req, res) => {
 }
 // 修改章节目录信息
 const editSection = (req, res) => {
-    let section  = req.body
-    if(section===undefined){
-        return res.send({code:201,msg:'数据为空！'})
+    let section = req.body
+    if (section === undefined) {
+        return res.send({ code: 201, msg: '数据为空！' })
     }
     // console.log(section);
     fs.readFile(COURSE_SECTION, (err, data) => {
@@ -218,14 +218,81 @@ const editSection = (req, res) => {
 const getCourseClassify = (req, res) => {
     let { classifyName } = req.query
     let sql = `SELECT * from course WHERE classify_name = ? `
-    db.query(sql, classifyName,(err, results)=> {
-    if (err) return res.send({ code: 201, msg: err.message })
-    res.send({
-        code: 200,
-        msg: '获取成功！',
-        data: results
+    db.query(sql, classifyName, (err, results) => {
+        if (err) return res.send({ code: 201, msg: err.message })
+        res.send({
+            code: 200,
+            msg: '获取成功！',
+            data: results
+        })
     })
-})
+}
+// 添加或更新当前课程的观看进度
+const setCoursePlan = (req, res) => {
+    let record = req.body
+    let sql = 'select * from tm_ocp_chapterdurationrecord WHERE courseid = ?'
+    db.query(sql, record.courseid, (err, results) => {
+        if (err) return res.send({ code: 201, msg: err.message })
+        if (results.length > 0) {
+            let sql = `UPDATE tm_ocp_chapterdurationrecord SET ? WHERE courseid = ${record.courseid}`
+            db.query(sql, record, (err, results) => {
+                if (err) return res.send({ code: 201, msg: err.message })
+                if (results.affectedRows !== 1) return res.send({ code: 201, msg: '保存章记录失败！' });
+                res.send({ code: 200, msg: '保存章记录成功！' })
+            })
+        } else {
+            // 根据试卷id在数据库查寻当前学生试卷是否存在，不存在才添加
+            let sql = 'INSERT INTO tm_ocp_chapterdurationrecord SET ?'
+            db.query(sql, record, (err, results) => {
+                if (err) return res.send({ code: 201, msg: err.message })
+                if (results.affectedRows !== 1) return res.send({ code: 201, msg: '保存章记录失败！' });
+                res.send({ code: 200, msg: '保存章记录成功！' })
+            })
+        }
+    })
+}
+// 根据用户id获取学生购买的所有课程
+const getMyCourse = (req, res) => {
+    let userid = req.query.uid
+    let chapter = []
+    let sql = 'select * from tm_ocp_chapterdurationrecord WHERE userid = ?'
+    db.query(sql, userid, (err, results) => {
+        if (err) return res.send({ code: 201, msg: err.message })
+        let courseids = ""
+        chapter = [...results]
+        chapter.forEach((item, index) => {
+            if (index == results.length - 1) {
+                courseids += item.courseid
+                return
+            }
+            courseids += `${item.courseid},`
+        })
+        // 根据数组中的课程id去将符合的课程筛选出来
+        let sql = `select * from course where id in (${courseids})`
+        db.query(sql, (err, results) => {
+            if (err) return res.send({ code: 201, msg: err.message })
+            for (const key in chapter) {
+                chapter[key].courseName = results[key].courseName
+            }
+            // 根据章节id去查找对应的节点数据
+            fs.readFile(COURSE_SECTION, (err, data) => {
+                if (err) return res.send({ code: 201, msg: err })
+                let results = (JSON.parse(data))
+                for (const item of chapter) {
+                    results.forEach(value => {
+                        if (value.id == item.chapterid) {
+                            item.chapter = value
+                        }
+                    });
+                }
+                res.send({
+                    code: 200,
+                    msg: '获取已购买课程成功！',
+                    data: chapter
+                })
+            })
+        })
+    })
 }
 module.exports = {
     addCourse,
@@ -236,5 +303,7 @@ module.exports = {
     editCourseInfo,
     addCourseSection,
     editSection,
-    getCourseClassify
+    getCourseClassify,
+    setCoursePlan,
+    getMyCourse
 }

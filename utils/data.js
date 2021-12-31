@@ -27,6 +27,7 @@ const rights = [
             { name: 'couresInfo', title: '课程管理', path: 'course', icon: "el-icon-document-copy" },
             { name: 'uploadVideo', title: '上传视频', path: 'uploadvideo', icon: "el-icon-upload2" },
             { name: 'courseList', title: '课程中心', path: 'courseList', icon: "el-icon-s-home" },
+            { name: 'myCourse', title: '我的课程', path: 'myCourse', icon: "el-icon-s-home" },
         ]
 
     },
