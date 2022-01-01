@@ -4,7 +4,7 @@ const router = express.Router()
 
 const users = require('../server/userInfo')
 
-const wechat = require('../router/wxuuid')
+const wechat = require('./wxuuid')
 
 const secret = require('../server/secret_key')
 

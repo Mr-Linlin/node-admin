@@ -158,6 +158,7 @@ const submitGrades = (req, res) => {
             let sql = `UPDATE exam_grades SET ? WHERE exam_id = ${grades.exam_id}`
             db.query(sql, grades, (err, results) => {
                 if (err) return res.send({ code: 201, msg: err.message })
+                console.log(results[0]);
                 if (results.affectedRows !== 1) return res.send({ code: 201, msg: '提交试卷失败！' });
                 res.send({ code: 200, msg: '提交试卷成功！' })
             })
